@@ -1,7 +1,8 @@
 const { Router } = require("express");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const prisma = require("../lib/prisma");
-const { authRequired } = require("../middleware/auth");
+const { authRequired, JWT_SECRET } = require("../middleware/auth");
 
 const router = Router();
 
@@ -33,14 +34,23 @@ router.put("/", authRequired, async (req, res) => {
         return res.status(400).json({ error: "A senha deve ter no mínimo 8 caracteres, 1 maiúscula, 1 número e 1 caractere especial" });
       }
       data.password = await bcrypt.hash(password, 10);
+      data.mustChangePassword = false;
     }
 
     const user = await prisma.user.update({
       where: { id: req.user.id },
       data,
-      select: { id: true, name: true, email: true, role: true },
+      select: { id: true, name: true, email: true, role: true, mustChangePassword: true },
     });
-    res.json(user);
+
+    // Issue new token with updated mustChangePassword
+    const newToken = jwt.sign(
+      { id: user.id, name: user.name, email: user.email, role: user.role, mustChangePassword: user.mustChangePassword },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.json({ ...user, token: newToken });
   } catch (err) {
     if (err.code === "P2002") {
       return res.status(409).json({ error: "Email already in use" });

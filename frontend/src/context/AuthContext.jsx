@@ -37,8 +37,14 @@ export function AuthProvider({ children }) {
   };
 
   const updateUser = (updated) => {
-    localStorage.setItem("user", JSON.stringify(updated));
-    setUser(updated);
+    // If a new token was returned (e.g. after password change), update it
+    if (updated.token) {
+      localStorage.setItem("token", updated.token);
+      setToken(updated.token);
+    }
+    const { token: _t, ...userData } = updated;
+    localStorage.setItem("user", JSON.stringify(userData));
+    setUser(userData);
   };
 
   return (

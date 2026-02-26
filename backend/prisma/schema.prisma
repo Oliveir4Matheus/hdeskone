@@ -8,14 +8,15 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  password  String
-  role      String    @default("colaborador")
-  tickets   Ticket[]  @relation("assigned")
-  messages  Message[]
-  createdAt DateTime  @default(now())
+  id                 Int       @id @default(autoincrement())
+  name               String
+  email              String    @unique
+  password           String
+  role               String    @default("colaborador")
+  mustChangePassword Boolean   @default(true)
+  tickets            Ticket[]  @relation("assigned")
+  messages           Message[]
+  createdAt          DateTime  @default(now())
 }
 
 model Ticket {

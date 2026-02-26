@@ -70,14 +70,14 @@ router.post("/login", authLimiter, async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, name: user.name, email: user.email, role: user.role },
+      { id: user.id, name: user.name, email: user.email, role: user.role, mustChangePassword: user.mustChangePassword },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
 
     res.json({
       token,
-      user: { id: user.id, name: user.name, email: user.email, role: user.role },
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, mustChangePassword: user.mustChangePassword },
     });
   } catch (err) {
     console.error(err);
