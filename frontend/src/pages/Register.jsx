@@ -158,6 +158,16 @@ export default function Register() {
     api.get("/users").then(({ data }) => setUsers(data)).catch(() => {});
   };
 
+  const deleteUser = async (u) => {
+    if (!confirm(`Excluir usuário "${u.name}"? Esta ação não pode ser desfeita.`)) return;
+    try {
+      await api.delete(`/users/${u.id}`);
+      fetchUsers();
+    } catch (err) {
+      alert(err.response?.data?.error || "Falha ao excluir usuário");
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -221,7 +231,7 @@ export default function Register() {
                         {ROLE_LABELS[u.role] || u.role}
                       </span>
                     </td>
-                    <td>
+                    <td style={{ display: "flex", gap: "0.4rem" }}>
                       <button
                         className="btn btn-secondary"
                         style={{ fontSize: "0.75rem", padding: "0.3rem 0.6rem" }}
@@ -229,6 +239,15 @@ export default function Register() {
                       >
                         Editar
                       </button>
+                      {u.id !== user.id && (
+                        <button
+                          className="btn btn-danger"
+                          style={{ fontSize: "0.75rem", padding: "0.3rem 0.6rem" }}
+                          onClick={() => deleteUser(u)}
+                        >
+                          Excluir
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
