@@ -108,9 +108,12 @@ function EditUserModal({ editUser, onClose, onSaved }) {
               type="password"
               value={form.password}
               onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-              placeholder="Mínimo 6 caracteres"
-              minLength={6}
+              placeholder="Mín. 8 caracteres"
+              minLength={8}
             />
+            <span style={{ fontSize: "0.72rem", color: "#9ca3af" }}>
+              Mín. 8 caracteres, 1 maiúscula, 1 número, 1 especial
+            </span>
           </div>
 
           {msg && (
@@ -261,8 +264,11 @@ export default function Register() {
                 value={form.password}
                 onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
                 required
-                minLength={6}
+                minLength={8}
               />
+              <span style={{ fontSize: "0.72rem", color: "#9ca3af" }}>
+                Mín. 8 caracteres, 1 maiúscula, 1 número, 1 especial
+              </span>
             </div>
             <div className="form-group">
               <label>Tipo</label>

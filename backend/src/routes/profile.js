@@ -27,7 +27,13 @@ router.put("/", authRequired, async (req, res) => {
     const data = {};
     if (name) data.name = name;
     if (email) data.email = email;
-    if (password) data.password = await bcrypt.hash(password, 10);
+    if (password) {
+      const passwordRules = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$/;
+      if (!passwordRules.test(password)) {
+        return res.status(400).json({ error: "A senha deve ter no mínimo 8 caracteres, 1 maiúscula, 1 número e 1 caractere especial" });
+      }
+      data.password = await bcrypt.hash(password, 10);
+    }
 
     const user = await prisma.user.update({
       where: { id: req.user.id },

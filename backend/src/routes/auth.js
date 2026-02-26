@@ -7,6 +7,9 @@ const { JWT_SECRET, adminRequired } = require("../middleware/auth");
 
 const router = Router();
 
+const PASSWORD_RULES = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$/;
+const PASSWORD_MSG = "A senha deve ter no mínimo 8 caracteres, 1 maiúscula, 1 número e 1 caractere especial";
+
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 20,
@@ -23,8 +26,8 @@ router.post("/register", adminRequired, async (req, res) => {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ error: "Password must be at least 6 characters" });
+    if (!PASSWORD_RULES.test(password)) {
+      return res.status(400).json({ error: PASSWORD_MSG });
     }
 
     const allowedRoles = ["colaborador", "support", "admin"];

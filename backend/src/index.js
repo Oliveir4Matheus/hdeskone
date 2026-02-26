@@ -89,10 +89,12 @@ app.put("/api/users/:id", adminRequired, async (req, res) => {
       const allowedRoles = ["colaborador", "support", "admin"];
       if (allowedRoles.includes(role)) data.role = role;
     }
-    if (password && password.length >= 6) {
+    if (password && password.length > 0) {
+      const passwordRules = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$/;
+      if (!passwordRules.test(password)) {
+        return res.status(400).json({ error: "A senha deve ter no mínimo 8 caracteres, 1 maiúscula, 1 número e 1 caractere especial" });
+      }
       data.password = await bcrypt.hash(password, 10);
-    } else if (password && password.length > 0) {
-      return res.status(400).json({ error: "Password must be at least 6 characters" });
     }
 
     const user = await prisma.user.update({

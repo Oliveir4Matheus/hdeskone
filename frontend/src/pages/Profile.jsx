@@ -64,13 +64,17 @@ export default function Profile() {
             />
           </div>
           <div className="form-group">
-            <label>New Password (leave blank to keep current)</label>
+            <label>Nova Senha (deixe em branco para manter)</label>
             <input
               type="password"
               value={form.password}
               onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-              minLength={6}
+              placeholder="Mín. 8 caracteres"
+              minLength={8}
             />
+            <span style={{ fontSize: "0.72rem", color: "#9ca3af" }}>
+              Mín. 8 caracteres, 1 maiúscula, 1 número, 1 especial
+            </span>
           </div>
           {message && (
             <p
