@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import api from "../api";
 
+const PROTECTED_STATUSES = ["open", "in_progress", "closed"];
+
 export default function Config() {
   const [statuses, setStatuses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ name: "", color: "#6b7280", order: 0 });
   const [editing, setEditing] = useState(null);
+  const [editingProtected, setEditingProtected] = useState(false);
 
   const fetchStatuses = () => {
     api
@@ -37,11 +40,13 @@ export default function Config() {
 
   const startEdit = (s) => {
     setEditing(s.id);
+    setEditingProtected(PROTECTED_STATUSES.includes(s.name));
     setForm({ name: s.name, color: s.color, order: s.order });
   };
 
   const cancelEdit = () => {
     setEditing(null);
+    setEditingProtected(false);
     setForm({ name: "", color: "#6b7280", order: 0 });
   };
 
@@ -109,12 +114,14 @@ export default function Config() {
                       >
                         Edit
                       </button>
-                      <button
-                        className="btn btn-danger"
-                        onClick={() => deleteStatus(s.id)}
-                      >
-                        Delete
-                      </button>
+                      {!PROTECTED_STATUSES.includes(s.name) && (
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => deleteStatus(s.id)}
+                        >
+                          Delete
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -134,7 +141,13 @@ export default function Config() {
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                 required
+                disabled={editingProtected}
               />
+              {editingProtected && (
+                <span style={{ fontSize: "0.75rem", color: "#9ca3af" }}>
+                  Status protegido — nome não pode ser alterado
+                </span>
+              )}
             </div>
             <div className="form-group">
               <label>Color</label>

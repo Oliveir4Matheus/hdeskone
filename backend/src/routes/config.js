@@ -4,6 +4,8 @@ const { authRequired, adminRequired } = require("../middleware/auth");
 
 const router = Router();
 
+const PROTECTED_STATUSES = ["open", "in_progress", "closed"];
+
 // List statuses (auth required)
 router.get("/statuses", authRequired, async (req, res) => {
   try {
@@ -39,14 +41,25 @@ router.post("/statuses", adminRequired, async (req, res) => {
 // Update status (admin only)
 router.put("/statuses/:id", adminRequired, async (req, res) => {
   try {
+    const existing = await prisma.ticketStatus.findUnique({
+      where: { id: parseInt(req.params.id) },
+    });
+    if (!existing) return res.status(404).json({ error: "Status not found" });
+
     const { name, color, order } = req.body;
     const data = {};
+
+    // Protected statuses cannot be renamed
+    if (PROTECTED_STATUSES.includes(existing.name) && name !== undefined && name !== existing.name) {
+      return res.status(400).json({ error: "Cannot rename a protected status" });
+    }
+
     if (name !== undefined) data.name = name;
     if (color !== undefined) data.color = color;
     if (order !== undefined) data.order = order;
 
     const status = await prisma.ticketStatus.update({
-      where: { id: parseInt(req.params.id) },
+      where: { id: existing.id },
       data,
     });
     res.json(status);
@@ -59,9 +72,16 @@ router.put("/statuses/:id", adminRequired, async (req, res) => {
 // Delete status (admin only)
 router.delete("/statuses/:id", adminRequired, async (req, res) => {
   try {
-    await prisma.ticketStatus.delete({
+    const existing = await prisma.ticketStatus.findUnique({
       where: { id: parseInt(req.params.id) },
     });
+    if (!existing) return res.status(404).json({ error: "Status not found" });
+
+    if (PROTECTED_STATUSES.includes(existing.name)) {
+      return res.status(400).json({ error: "Cannot delete a protected status" });
+    }
+
+    await prisma.ticketStatus.delete({ where: { id: existing.id } });
     res.json({ message: "Status deleted" });
   } catch (err) {
     console.error(err);
