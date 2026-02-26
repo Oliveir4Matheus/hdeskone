@@ -70,9 +70,6 @@ export default function Login() {
           </button>
         </form>
         <p style={{ marginTop: "1rem", fontSize: "0.875rem", textAlign: "center" }}>
-          Don't have an account? <Link to="/register">Register</Link>
-        </p>
-        <p style={{ marginTop: "0.5rem", fontSize: "0.875rem", textAlign: "center" }}>
           <Link to="/new-ticket">Submit a ticket without login</Link>
         </p>
       </div>

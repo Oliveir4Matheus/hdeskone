@@ -12,26 +12,36 @@ model User {
   name      String
   email     String    @unique
   password  String
-  role      String    @default("agent")
+  role      String    @default("colaborador")
   tickets   Ticket[]  @relation("assigned")
   messages  Message[]
   createdAt DateTime  @default(now())
 }
 
 model Ticket {
-  id          Int          @id @default(autoincrement())
-  title       String
-  description String
-  priority    String       @default("medium")
-  status      String       @default("open")
+  id             Int          @id @default(autoincrement())
+  title          String
+  description    String
+  priority       String       @default("medium")
+  status         String       @default("open")
+  type           String       @default("incidente")
+  base           String       @default("GRU")
+  ccEmails       String?
   requester      String
   requesterEmail String?
   assignedTo     User?        @relation("assigned", fields: [assignedId], references: [id])
-  assignedId  Int?
-  attachments Attachment[]
-  messages    Message[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  assignedId     Int?
+  attachments    Attachment[]
+  messages       Message[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([status])
+  @@index([priority])
+  @@index([assignedId])
+  @@index([createdAt])
+  @@index([type])
+  @@index([base])
 }
 
 model Attachment {
@@ -39,8 +49,10 @@ model Attachment {
   filename  String
   path      String
   ticketId  Int
-  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+
+  @@index([ticketId])
 }
 
 model Message {
@@ -49,8 +61,10 @@ model Message {
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
   ticketId  Int
-  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+
+  @@index([ticketId])
 }
 
 model TicketStatus {

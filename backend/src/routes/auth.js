@@ -1,17 +1,34 @@
 const { Router } = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const rateLimit = require("express-rate-limit");
 const prisma = require("../lib/prisma");
-const { JWT_SECRET } = require("../middleware/auth");
+const { JWT_SECRET, adminRequired } = require("../middleware/auth");
 
 const router = Router();
 
-router.post("/register", async (req, res) => {
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20,
+  message: { error: "Too many attempts, please try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Register — admin only (creates users/agents)
+router.post("/register", adminRequired, async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
     if (!name || !email || !password) {
       return res.status(400).json({ error: "All fields are required" });
     }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: "Password must be at least 6 characters" });
+    }
+
+    const allowedRoles = ["colaborador", "support", "admin"];
+    const userRole = allowedRoles.includes(role) ? role : "colaborador";
 
     const exists = await prisma.user.findUnique({ where: { email } });
     if (exists) {
@@ -20,17 +37,10 @@ router.post("/register", async (req, res) => {
 
     const hash = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
-      data: { name, email, password: hash },
+      data: { name, email, password: hash, role: userRole },
     });
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
     res.status(201).json({
-      token,
       user: { id: user.id, name: user.name, email: user.email, role: user.role },
     });
   } catch (err) {
@@ -39,7 +49,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", authLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -57,7 +67,7 @@ router.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, name: user.name, email: user.email, role: user.role },
       JWT_SECRET,
       { expiresIn: "7d" }
     );

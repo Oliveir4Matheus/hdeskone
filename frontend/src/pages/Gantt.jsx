@@ -22,10 +22,10 @@ export default function Gantt() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    Promise.all([api.get("/config/statuses"), api.get("/tickets")])
+    Promise.all([api.get("/config/statuses"), api.get("/tickets", { params: { limit: 100 } })])
       .then(([statusRes, ticketRes]) => {
         setStatuses(statusRes.data);
-        setTickets(ticketRes.data);
+        setTickets(ticketRes.data.data);
       })
       .catch(console.error)
       .finally(() => setLoading(false));

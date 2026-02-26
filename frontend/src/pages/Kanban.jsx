@@ -19,13 +19,13 @@ export default function Kanban() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    Promise.all([api.get("/config/statuses"), api.get("/tickets")])
+    Promise.all([api.get("/config/statuses"), api.get("/tickets", { params: { limit: 100 } })])
       .then(([statusRes, ticketRes]) => {
         const sorted = [...statusRes.data].sort(
           (a, b) => (a.order ?? 0) - (b.order ?? 0)
         );
         setStatuses(sorted);
-        setTickets(ticketRes.data);
+        setTickets(ticketRes.data.data);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -130,6 +130,18 @@ export default function Kanban() {
                       >
                         {t.priority}
                       </span>
+                      {t.base && (
+                        <span
+                          className="badge"
+                          style={{
+                            background: "#fef3c7",
+                            color: "#92400e",
+                            fontSize: "0.65rem",
+                          }}
+                        >
+                          {t.base}
+                        </span>
+                      )}
                       <span className="kanban-card-user">
                         {t.requester}
                       </span>

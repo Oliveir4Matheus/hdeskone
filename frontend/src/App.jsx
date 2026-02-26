@@ -17,7 +17,6 @@ export default function App() {
     <Routes>
       {/* Public routes */}
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
       <Route path="/new-ticket" element={<NewTicket />} />
 
       {/* Protected routes */}
@@ -34,6 +33,7 @@ export default function App() {
         <Route path="/tickets/gantt" element={<Gantt />} />
         <Route path="/tickets/new" element={<NewTicket />} />
         <Route path="/tickets/:id" element={<TicketDetail />} />
+        <Route path="/users" element={<Register />} />
         <Route path="/config" element={<Config />} />
         <Route path="/profile" element={<Profile />} />
       </Route>

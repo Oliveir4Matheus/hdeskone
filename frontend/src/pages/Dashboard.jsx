@@ -188,9 +188,9 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([api.get("/tickets"), api.get("/config/statuses")])
+    Promise.all([api.get("/tickets", { params: { limit: 100 } }), api.get("/config/statuses")])
       .then(([tRes, sRes]) => {
-        setTickets(tRes.data);
+        setTickets(tRes.data.data);
         setStatuses(sRes.data);
       })
       .catch(console.error)

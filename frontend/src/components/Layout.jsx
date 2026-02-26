@@ -4,10 +4,14 @@ import { useAuth } from "../context/AuthContext";
 const navItems = [
   { to: "/", label: "Dashboard" },
   { to: "/tickets", label: "Tickets" },
-  { to: "/tickets/new", label: "New Ticket" },
-  { to: "/config", label: "Config" },
-  { to: "/profile", label: "Profile" },
+  { to: "/tickets/new", label: "Novo Ticket" },
+  { to: "/tickets/kanban", label: "Kanban", staffOnly: true },
+  { to: "/users", label: "Usuários", adminOnly: true },
+  { to: "/config", label: "Config", adminOnly: true },
+  { to: "/profile", label: "Perfil" },
 ];
+
+const ROLE_LABELS = { admin: "Admin", support: "Support", colaborador: "Colaborador" };
 
 export default function Layout() {
   const { user, logout } = useAuth();
@@ -44,7 +48,8 @@ export default function Layout() {
         <nav style={{ flex: 1 }}>
           {navItems
             .filter((item) => {
-              if (item.to === "/config" && user?.role !== "admin") return false;
+              if (item.adminOnly && user?.role !== "admin") return false;
+              if (item.staffOnly && user?.role !== "admin" && user?.role !== "support") return false;
               return true;
             })
             .map((item) => (
@@ -62,7 +67,7 @@ export default function Layout() {
         </nav>
         <div style={{ padding: "1rem 1.25rem", borderTop: "1px solid #333333" }}>
           <div style={{ fontSize: "0.85rem", color: "#999999", marginBottom: "0.5rem" }}>
-            {user?.name} ({user?.role})
+            {user?.name} ({ROLE_LABELS[user?.role] || user?.role})
           </div>
           <button onClick={handleLogout} className="sidebar-logout">
             Logout

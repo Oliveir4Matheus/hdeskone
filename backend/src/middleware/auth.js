@@ -1,6 +1,10 @@
 const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = process.env.JWT_SECRET || "changeme";
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error("FATAL: JWT_SECRET environment variable is required");
+  process.exit(1);
+}
 
 function authRequired(req, res, next) {
   const header = req.headers.authorization;
@@ -42,4 +46,13 @@ function optionalAuth(req, res, next) {
   next();
 }
 
-module.exports = { authRequired, adminRequired, optionalAuth, JWT_SECRET };
+function staffRequired(req, res, next) {
+  authRequired(req, res, () => {
+    if (req.user.role !== "admin" && req.user.role !== "support") {
+      return res.status(403).json({ error: "Staff access required" });
+    }
+    next();
+  });
+}
+
+module.exports = { authRequired, adminRequired, staffRequired, optionalAuth, JWT_SECRET };
