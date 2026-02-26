@@ -239,13 +239,16 @@ export default function Register() {
 
         <div className="card">
           <h3 style={{ fontSize: "1rem", marginBottom: "1rem" }}>Novo Usuário</h3>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} autoComplete="off">
             <div className="form-group">
               <label>Nome</label>
               <input
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                 required
+                autoComplete="off"
+                data-lpignore="true"
+                data-form-type="other"
               />
             </div>
             <div className="form-group">
@@ -255,6 +258,9 @@ export default function Register() {
                 value={form.email}
                 onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                 required
+                autoComplete="off"
+                data-lpignore="true"
+                data-form-type="other"
               />
             </div>
             <div className="form-group">
@@ -265,6 +271,9 @@ export default function Register() {
                 onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
                 required
                 minLength={8}
+                autoComplete="new-password"
+                data-lpignore="true"
+                data-form-type="other"
               />
               <span style={{ fontSize: "0.72rem", color: "#9ca3af" }}>
                 Mín. 8 caracteres, 1 maiúscula, 1 número, 1 especial
