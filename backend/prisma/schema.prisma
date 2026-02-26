@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  role      String    @default("agent")
+  tickets   Ticket[]  @relation("assigned")
+  messages  Message[]
+  createdAt DateTime  @default(now())
+}
+
+model Ticket {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String
+  priority    String       @default("medium")
+  status      String       @default("open")
+  requester      String
+  requesterEmail String?
+  assignedTo     User?        @relation("assigned", fields: [assignedId], references: [id])
+  assignedId  Int?
+  attachments Attachment[]
+  messages    Message[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Attachment {
+  id        Int      @id @default(autoincrement())
+  filename  String
+  path      String
+  ticketId  Int
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  ticketId  Int
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model TicketStatus {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  color String @default("#6b7280")
+  order Int    @default(0)
+}
