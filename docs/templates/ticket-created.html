@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ticket #{{ticketId}} criado</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f4f5f7;font-family:Arial,Helvetica,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f5f7;padding:24px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+          <!-- Brand -->
+          <tr>
+            <td style="padding:24px 32px 16px;text-align:center;">
+              <span style="font-size:24px;font-weight:800;letter-spacing:-0.025em;"><span style="color:#d70f0a;">hdesk</span><span style="color:#111111;">one</span></span>
+            </td>
+          </tr>
+          <!-- Red accent bar -->
+          <tr>
+            <td style="background-color:#d70f0a;height:6px;font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+
+          <!-- Title -->
+          <tr>
+            <td style="padding:32px 32px 16px;">
+              <h1 style="margin:0;font-size:20px;color:#1a1a1a;">
+                Ticket #{{ticketId}} criado
+              </h1>
+              <p style="margin:8px 0 0;font-size:15px;color:#555555;">
+                {{title}}
+              </p>
+            </td>
+          </tr>
+
+          <!-- Details Inline -->
+          <tr>
+            <td style="padding:0 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <!-- Row 1: Tipo | Base | Prioridade -->
+                <tr>
+                  <td width="33%" style="padding:0 8px 12px 0;" valign="top">
+                    <p style="margin:0 0 4px;font-size:11px;color:#888888;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Tipo</p>
+                    <p style="margin:0;font-size:14px;color:#1a1a1a;font-weight:600;">{{type}}</p>
+                  </td>
+                  <td width="33%" style="padding:0 8px 12px;" valign="top">
+                    <p style="margin:0 0 4px;font-size:11px;color:#888888;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Base</p>
+                    <p style="margin:0;font-size:14px;color:#1a1a1a;font-weight:600;">{{base}}</p>
+                  </td>
+                  <td width="34%" style="padding:0 0 12px 8px;" valign="top">
+                    <p style="margin:0 0 4px;font-size:11px;color:#888888;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Prioridade</p>
+                    <p style="margin:0;font-size:14px;color:#1a1a1a;font-weight:600;">{{priority}}</p>
+                  </td>
+                </tr>
+                <!-- Row 2: Solicitante | Data -->
+                <tr>
+                  <td colspan="2" style="padding:0 8px 0 0;" valign="top">
+                    <p style="margin:0 0 4px;font-size:11px;color:#888888;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Solicitante</p>
+                    <p style="margin:0;font-size:14px;color:#1a1a1a;">{{requester}} ({{requesterEmail}})</p>
+                  </td>
+                  <td style="padding:0 0 0 8px;" valign="top">
+                    <p style="margin:0 0 4px;font-size:11px;color:#888888;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Data de abertura</p>
+                    <p style="margin:0;font-size:14px;color:#1a1a1a;">{{createdAt}}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Description -->
+          <tr>
+            <td style="padding:24px 32px 0;">
+              <p style="margin:0 0 8px;font-size:13px;color:#666666;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Descrição</p>
+              <div style="padding:16px;background-color:#f8f9fa;border-radius:6px;font-size:14px;color:#333333;line-height:1.6;white-space:pre-wrap;">{{description}}</div>
+            </td>
+          </tr>
+
+          <!-- Attachments -->
+          <tr>
+            <td style="padding:24px 32px 0;">
+              <p style="margin:0 0 8px;font-size:13px;color:#666666;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Anexos</p>
+              <div style="padding:16px;background-color:#f8f9fa;border-radius:6px;font-size:14px;color:#333333;line-height:1.8;">
+                {{attachments}}
+              </div>
+            </td>
+          </tr>
+
+          <!-- Initial Message -->
+          <tr>
+            <td style="padding:24px 32px 0;">
+              <p style="margin:0 0 8px;font-size:13px;color:#666666;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Mensagem inicial</p>
+              <div style="padding:16px;background-color:#f8f9fa;border-radius:6px;font-size:14px;color:#333333;line-height:1.6;white-space:pre-wrap;">{{message}}</div>
+            </td>
+          </tr>
+
+          <!-- Button -->
+          <tr>
+            <td style="padding:32px 32px 8px;" align="center">
+              <a href="{{ticketUrl}}" target="_blank" style="display:inline-block;padding:12px 32px;background-color:#d70f0a;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;border-radius:6px;">
+                Ver Ticket
+              </a>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:24px 32px;border-top:1px solid #e2e4e9;margin-top:16px;">
+              <p style="margin:0;font-size:12px;color:#999999;text-align:center;">
+                Esta é uma mensagem automática enviada pelo sistema <span style="color:#d70f0a;font-weight:800;">hdesk</span><span style="color:#111111;font-weight:800;">one</span>. Não responda a este e-mail.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

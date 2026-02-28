@@ -1,6 +1,16 @@
 const multer = require("multer");
 const path = require("path");
 
+// Multer decodes filenames as latin1 by default, but browsers send UTF-8.
+// This re-encodes the latin1 bytes back to a proper UTF-8 string.
+function fixUtf8(str) {
+  try {
+    return Buffer.from(str, "latin1").toString("utf8");
+  } catch {
+    return str;
+  }
+}
+
 const ALLOWED_EXTENSIONS = new Set([
   // Images
   ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".bmp", ".ico",
@@ -27,6 +37,9 @@ const storage = multer.diskStorage({
 });
 
 function fileFilter(req, file, cb) {
+  // Fix UTF-8 filename encoding before any consumer reads originalname
+  file.originalname = fixUtf8(file.originalname);
+
   const ext = path.extname(file.originalname).toLowerCase();
   if (!ALLOWED_EXTENSIONS.has(ext)) {
     return cb(new Error(`File type ${ext} is not allowed`), false);

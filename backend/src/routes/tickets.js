@@ -3,6 +3,7 @@ const rateLimit = require("express-rate-limit");
 const prisma = require("../lib/prisma");
 const { authRequired, adminRequired, staffRequired, optionalAuth } = require("../middleware/auth");
 const upload = require("../middleware/upload");
+const { sendTicketCreated, sendTicketUpdated } = require("../lib/mailer");
 
 const router = Router();
 
@@ -120,6 +121,12 @@ router.post("/", publicTicketLimiter, optionalAuth, upload.array("files", 10), a
     });
 
     res.status(201).json(full);
+
+    // Notify requester by email (fire-and-forget)
+    sendTicketCreated(full, {
+      attachmentNames: req.files ? req.files.map((f) => f.originalname) : [],
+      initialMessage: (message && req.user) ? message : "",
+    }).catch((err) => console.error("[mailer] sendTicketCreated:", err.message));
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal server error" });
@@ -210,6 +217,8 @@ router.get("/:id", authRequired, async (req, res) => {
   }
 });
 
+const PRIORITY_LABELS = { low: "Baixa", medium: "Média", high: "Alta", urgent: "Urgente" };
+
 // Update ticket (staff only)
 router.put("/:id", staffRequired, async (req, res) => {
   try {
@@ -235,6 +244,12 @@ router.put("/:id", staffRequired, async (req, res) => {
     if (assignedId !== undefined)
       data.assignedId = assignedId === null ? null : parseId(assignedId);
 
+    // Fetch old ticket to compare changes and get email recipients
+    const oldTicket = await prisma.ticket.findUnique({
+      where: { id },
+      include: { assignedTo: { select: { name: true } } },
+    });
+
     const ticket = await prisma.ticket.update({
       where: { id },
       data,
@@ -242,6 +257,34 @@ router.put("/:id", staffRequired, async (req, res) => {
     });
 
     res.json(ticket);
+
+    // Determine the most significant tracked change and notify by email (fire-and-forget)
+    if (oldTicket && oldTicket.requesterEmail) {
+      let changeField, oldValue, newValue;
+
+      if (data.status !== undefined && data.status !== oldTicket.status) {
+        changeField = "Status";
+        oldValue = oldTicket.status;
+        newValue = data.status;
+      } else if (data.assignedId !== undefined && data.assignedId !== oldTicket.assignedId) {
+        changeField = "Responsável";
+        oldValue = oldTicket.assignedTo?.name || "Não atribuído";
+        newValue = ticket.assignedTo?.name || "Não atribuído";
+      } else if (data.priority !== undefined && data.priority !== oldTicket.priority) {
+        changeField = "Prioridade";
+        oldValue = PRIORITY_LABELS[oldTicket.priority] || oldTicket.priority;
+        newValue = PRIORITY_LABELS[data.priority] || data.priority;
+      }
+
+      if (changeField) {
+        sendTicketUpdated(ticket, {
+          changeField,
+          oldValue,
+          newValue,
+          updatedBy: req.user.name,
+        }).catch((err) => console.error("[mailer] sendTicketUpdated:", err.message));
+      }
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal server error" });
@@ -269,13 +312,15 @@ router.post("/:id/messages", authRequired, async (req, res) => {
     const id = parseId(req.params.id);
     if (!id) return res.status(400).json({ error: "Invalid ticket ID" });
 
+    const ticket = await prisma.ticket.findUnique({
+      where: { id },
+      select: { id: true, title: true, requester: true, requesterEmail: true, ccEmails: true },
+    });
+    if (!ticket) return res.status(404).json({ error: "Ticket not found" });
+
     // Colaborador can only message on their own tickets
-    if (req.user.role === "colaborador") {
-      const ticket = await prisma.ticket.findUnique({ where: { id }, select: { requesterEmail: true } });
-      if (!ticket) return res.status(404).json({ error: "Ticket not found" });
-      if (ticket.requesterEmail !== req.user.email) {
-        return res.status(403).json({ error: "Access denied" });
-      }
+    if (req.user.role === "colaborador" && ticket.requesterEmail !== req.user.email) {
+      return res.status(403).json({ error: "Access denied" });
     }
 
     const { content } = req.body;
@@ -291,6 +336,17 @@ router.post("/:id/messages", authRequired, async (req, res) => {
     });
 
     res.status(201).json(message);
+
+    // Notify requester when staff replies (fire-and-forget)
+    if (req.user.role !== "colaborador") {
+      sendTicketUpdated(ticket, {
+        changeField: "Nova mensagem no chat",
+        oldValue: "-",
+        newValue: "-",
+        updatedBy: req.user.name,
+        chatMessage: content.slice(0, 5000),
+      }).catch((err) => console.error("[mailer] sendTicketUpdated (message):", err.message));
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal server error" });
