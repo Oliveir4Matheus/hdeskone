@@ -26,6 +26,11 @@ services:
       CORS_ORIGIN: ${CORS_ORIGIN:-}
       PORT: 3001
       NODE_ENV: production
+      APP_URL: ${APP_URL:-}
+      MAIL_API_BASE_URL: ${MAIL_API_BASE_URL:-}
+      MAIL_API_KEY: ${MAIL_API_KEY:-}
+      MAIL_CAMPAIGN_CREATED_ID: ${MAIL_CAMPAIGN_CREATED_ID:-}
+      MAIL_CAMPAIGN_UPDATED_ID: ${MAIL_CAMPAIGN_UPDATED_ID:-}
     volumes:
       - uploads:/app/uploads
     healthcheck:
