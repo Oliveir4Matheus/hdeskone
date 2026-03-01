@@ -122,11 +122,22 @@ router.post("/", publicTicketLimiter, optionalAuth, upload.array("files", 10), a
 
     res.status(201).json(full);
 
-    // Notify requester by email (fire-and-forget)
-    sendTicketCreated(full, {
-      attachmentNames: req.files ? req.files.map((f) => f.originalname) : [],
-      initialMessage: (message && req.user) ? message : "",
-    }).catch((err) => console.error("[mailer] sendTicketCreated:", err.message));
+    // Notify requester + all admin/support staff by email (fire-and-forget)
+    (async () => {
+      try {
+        const staffUsers = await prisma.user.findMany({
+          where: { role: { in: ["admin", "support"] } },
+          select: { email: true, name: true, role: true },
+        });
+        await sendTicketCreated(full, {
+          attachmentNames: req.files ? req.files.map((f) => f.originalname) : [],
+          initialMessage: (message && req.user) ? message : "",
+          staffUsers,
+        });
+      } catch (err) {
+        console.error("[mailer] sendTicketCreated:", err.message);
+      }
+    })();
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal server error" });

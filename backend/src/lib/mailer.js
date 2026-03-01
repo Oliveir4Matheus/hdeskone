@@ -68,9 +68,7 @@ async function runCampaign(campaignId, recipients, cc = []) {
   console.log(`[mailer] Campaign ${campaignId} started — task_id: ${data.task_id}`);
 }
 
-async function sendTicketCreated(ticket, { attachmentNames = [], initialMessage = "" } = {}) {
-  if (!ticket.requesterEmail) return;
-
+async function sendTicketCreated(ticket, { attachmentNames = [], initialMessage = "", staffUsers = [] } = {}) {
   const variables = {
     ticketId: String(ticket.id),
     title: ticket.title,
@@ -78,7 +76,7 @@ async function sendTicketCreated(ticket, { attachmentNames = [], initialMessage 
     base: ticket.base,
     priority: ticket.priority,
     requester: ticket.requester,
-    requesterEmail: ticket.requesterEmail,
+    requesterEmail: ticket.requesterEmail || "-",
     createdAt: formatDate(ticket.createdAt),
     description: ticket.description,
     attachments: attachmentNames.length > 0 ? attachmentNames.join("\n") : "Nenhum",
@@ -86,8 +84,26 @@ async function sendTicketCreated(ticket, { attachmentNames = [], initialMessage 
     ticketUrl: `${APP_URL}/tickets/${ticket.id}`,
   };
 
+  // Email 1: requester as main recipient + ccEmails in CC
   const { recipients, cc } = buildPayload(ticket, variables);
-  await runCampaign(MAIL_CAMPAIGN_CREATED_ID, recipients, cc);
+  if (recipients.length > 0) {
+    await runCampaign(MAIL_CAMPAIGN_CREATED_ID, recipients, cc);
+  }
+
+  // Email 2: all admins as recipients (To), support users as CC — single email
+  if (staffUsers.length > 0) {
+    const adminRecipients = staffUsers
+      .filter((s) => s.email && s.role === "admin")
+      .map((s) => ({ email: s.email, name: s.name || undefined, variables }));
+
+    const supportCc = staffUsers
+      .filter((s) => s.email && s.role === "support")
+      .map((s) => s.email);
+
+    if (adminRecipients.length > 0) {
+      await runCampaign(MAIL_CAMPAIGN_CREATED_ID, adminRecipients, supportCc);
+    }
+  }
 }
 
 async function sendTicketUpdated(ticket, { changeField, oldValue, newValue, updatedBy, chatMessage = "" }) {
