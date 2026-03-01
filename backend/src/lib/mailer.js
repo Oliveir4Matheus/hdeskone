@@ -2,6 +2,7 @@ const MAIL_API_BASE_URL = (process.env.MAIL_API_BASE_URL || "").replace(/\/$/, "
 const MAIL_API_KEY = process.env.MAIL_API_KEY;
 const MAIL_CAMPAIGN_CREATED_ID = process.env.MAIL_CAMPAIGN_CREATED_ID;
 const MAIL_CAMPAIGN_UPDATED_ID = process.env.MAIL_CAMPAIGN_UPDATED_ID;
+const MAIL_CAMPAIGN_CREATED_STAFF_ID = process.env.MAIL_CAMPAIGN_CREATED_STAFF_ID;
 const APP_URL = process.env.APP_URL || "";
 
 const TYPE_LABELS = {
@@ -90,7 +91,7 @@ async function sendTicketCreated(ticket, { attachmentNames = [], initialMessage 
     await runCampaign(MAIL_CAMPAIGN_CREATED_ID, recipients, cc);
   }
 
-  // Email 2: all admins as recipients (To), support users as CC — single email
+  // Email 2: group campaign — all admins as recipients (To), support as CC
   if (staffUsers.length > 0) {
     const adminRecipients = staffUsers
       .filter((s) => s.email && s.role === "admin")
@@ -101,7 +102,7 @@ async function sendTicketCreated(ticket, { attachmentNames = [], initialMessage 
       .map((s) => s.email);
 
     if (adminRecipients.length > 0) {
-      await runCampaign(MAIL_CAMPAIGN_CREATED_ID, adminRecipients, supportCc);
+      await runCampaign(MAIL_CAMPAIGN_CREATED_STAFF_ID, adminRecipients, supportCc);
     }
   }
 }

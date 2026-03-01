@@ -31,6 +31,7 @@ services:
       MAIL_API_KEY: ${MAIL_API_KEY:-}
       MAIL_CAMPAIGN_CREATED_ID: ${MAIL_CAMPAIGN_CREATED_ID:-}
       MAIL_CAMPAIGN_UPDATED_ID: ${MAIL_CAMPAIGN_UPDATED_ID:-}
+      MAIL_CAMPAIGN_CREATED_STAFF_ID: ${MAIL_CAMPAIGN_CREATED_STAFF_ID:-}
     volumes:
       - uploads:/app/uploads
     healthcheck:
