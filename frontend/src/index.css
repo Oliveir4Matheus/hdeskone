@@ -386,30 +386,27 @@ table tbody tr:hover {
 
 /* Kanban split layout */
 .kanban-split-container {
-  display: flex;
-  gap: 1rem;
+  position: relative;
 }
 
-.kanban-split-container .kanban-board {
-  flex: 1;
-  min-width: 0;
+.kanban-split-open {
+  margin-right: 436px;
 }
 
-.kanban-split-open .kanban-board {
-  flex: 1;
-}
-
-/* Kanban detail panel (side) */
+/* Kanban detail panel (side) — fixed to the right, doesn't compress the board */
 .kanban-detail-panel {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  bottom: 2rem;
   width: 420px;
-  min-width: 420px;
-  max-height: calc(100vh - 140px);
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
   border: 1px solid #eef0f3;
   display: flex;
   flex-direction: column;
+  z-index: 100;
   animation: kanbanSlideIn 0.2s ease-out;
 }
 

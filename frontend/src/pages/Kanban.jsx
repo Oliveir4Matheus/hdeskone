@@ -168,17 +168,18 @@ export default function Kanban() {
           })}
         </div>
 
-        {showSplit && (
-          <KanbanTicketPanel
-            ticket={selectedTicket}
-            statuses={statuses}
-            users={users}
-            isStaff={isStaff}
-            onClose={() => setSelectedTicket(null)}
-            onTicketUpdate={handleTicketUpdate}
-          />
-        )}
       </div>
+
+      {showSplit && (
+        <KanbanTicketPanel
+          ticket={selectedTicket}
+          statuses={statuses}
+          users={users}
+          isStaff={isStaff}
+          onClose={() => setSelectedTicket(null)}
+          onTicketUpdate={handleTicketUpdate}
+        />
+      )}
 
       {showModal && (
         <KanbanTicketModal
