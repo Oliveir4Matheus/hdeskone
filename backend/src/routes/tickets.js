@@ -3,8 +3,7 @@ const rateLimit = require("express-rate-limit");
 const prisma = require("../lib/prisma");
 const { authRequired, adminRequired, staffRequired, optionalAuth } = require("../middleware/auth");
 const upload = require("../middleware/upload");
-const { sendTicketCreated } = require("../lib/mailer");
-const { debouncedNotify } = require("../lib/mailDebounce");
+const { sendTicketCreated, sendTicketUpdated } = require("../lib/mailer");
 
 const router = Router();
 
@@ -289,12 +288,12 @@ router.put("/:id", staffRequired, async (req, res) => {
       }
 
       if (changeField) {
-        debouncedNotify(ticket, {
+        sendTicketUpdated(ticket, {
           changeField,
           oldValue,
           newValue,
           updatedBy: req.user.name,
-        });
+        }).catch((err) => console.error("[mailer] sendTicketUpdated:", err.message));
       }
     }
   } catch (err) {
@@ -349,15 +348,15 @@ router.post("/:id/messages", authRequired, async (req, res) => {
 
     res.status(201).json(message);
 
-    // Notify requester when staff replies (debounced)
+    // Notify requester when staff replies (fire-and-forget)
     if (req.user.role !== "colaborador") {
-      debouncedNotify(ticket, {
+      sendTicketUpdated(ticket, {
         changeField: "Nova mensagem no chat",
         oldValue: "-",
         newValue: "-",
         updatedBy: req.user.name,
         chatMessage: content.slice(0, 5000),
-      });
+      }).catch((err) => console.error("[mailer] sendTicketUpdated (message):", err.message));
     }
   } catch (err) {
     console.error(err);

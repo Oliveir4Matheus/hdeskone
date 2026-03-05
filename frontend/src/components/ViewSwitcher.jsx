@@ -5,7 +5,6 @@ const views = [
   { to: "/tickets", label: "Table" },
   { to: "/tickets/kanban", label: "Kanban", staffOnly: true },
   { to: "/tickets/gantt", label: "Gantt", staffOnly: true },
-  { to: "/tickets/kanban-mockup", label: "Kanban v2", staffOnly: true },
 ];
 
 export default function ViewSwitcher() {
