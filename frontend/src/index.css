@@ -389,10 +389,6 @@ table tbody tr:hover {
   position: relative;
 }
 
-.kanban-split-open {
-  margin-right: 436px;
-}
-
 /* Kanban detail panel (side) — fixed to the right, doesn't compress the board */
 .kanban-detail-panel {
   position: fixed;

@@ -124,7 +124,7 @@ export default function TicketPanelContent({ ticket, statuses, users, isStaff, o
       {ticket.description && (
         <div className="kanban-panel-section">
           <h4 className="kanban-panel-section-title">Descrição</h4>
-          <pre style={{ whiteSpace: "pre-wrap", fontSize: "0.85rem", color: "#3a3f47", margin: 0 }}>
+          <pre style={{ whiteSpace: "pre-wrap", fontSize: "0.85rem", color: "#3a3f47", margin: 0, background: "#f4f5f7", padding: "0.75rem", borderRadius: "8px", border: "1px solid #eef0f3" }}>
             {ticket.description}
           </pre>
         </div>
