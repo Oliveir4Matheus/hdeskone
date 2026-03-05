@@ -392,10 +392,10 @@ table tbody tr:hover {
 /* Kanban detail panel (side) — fixed to the right, doesn't compress the board */
 .kanban-detail-panel {
   position: fixed;
-  top: 2rem;
-  right: 2rem;
-  bottom: 2rem;
-  width: 420px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 504px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
