@@ -42,41 +42,7 @@ export default function TicketPanelContent({ ticket, statuses, users, isStaff, o
 
   return (
     <div className="kanban-panel-content">
-      {/* Info grid */}
-      <div className="kanban-panel-section">
-        <div className="kanban-panel-grid">
-          <div>
-            <span className="kanban-panel-label">Status</span>
-            <span className="badge" style={{ background: statuses.find((s) => s.name === ticket.status)?.color || "#6b7280", color: "#fff" }}>
-              {ticket.status}
-            </span>
-          </div>
-          <div>
-            <span className="kanban-panel-label">Prioridade</span>
-            <span className="badge" style={{ background: PRIORITY_COLORS[ticket.priority] || "#6b7280", color: "#fff" }}>
-              {PRIORITY_LABELS[ticket.priority] || ticket.priority}
-            </span>
-          </div>
-          <div>
-            <span className="kanban-panel-label">Tipo</span>
-            <span>{ticket.type}</span>
-          </div>
-          <div>
-            <span className="kanban-panel-label">Base</span>
-            <span className="badge" style={{ background: "#fef3c7", color: "#92400e" }}>{ticket.base}</span>
-          </div>
-          <div>
-            <span className="kanban-panel-label">Solicitante</span>
-            <span>{ticket.requester}</span>
-          </div>
-          <div>
-            <span className="kanban-panel-label">Responsável</span>
-            <span>{ticket.assignedTo?.name || "Não atribuído"}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Edit section (staff only) */}
+      {/* Edit section first (staff) — selects at top so dropdowns always open downward */}
       {isStaff && (
         <div className="kanban-panel-section">
           <h4 className="kanban-panel-section-title">Editar</h4>
@@ -119,6 +85,41 @@ export default function TicketPanelContent({ ticket, statuses, users, isStaff, o
           </div>
         </div>
       )}
+
+      {/* Info grid */}
+      <div className="kanban-panel-section">
+        <h4 className="kanban-panel-section-title">Informações</h4>
+        <div className="kanban-panel-grid">
+          <div>
+            <span className="kanban-panel-label">Status</span>
+            <span className="badge" style={{ background: statuses.find((s) => s.name === ticket.status)?.color || "#6b7280", color: "#fff" }}>
+              {ticket.status}
+            </span>
+          </div>
+          <div>
+            <span className="kanban-panel-label">Prioridade</span>
+            <span className="badge" style={{ background: PRIORITY_COLORS[ticket.priority] || "#6b7280", color: "#fff" }}>
+              {PRIORITY_LABELS[ticket.priority] || ticket.priority}
+            </span>
+          </div>
+          <div>
+            <span className="kanban-panel-label">Tipo</span>
+            <span>{ticket.type}</span>
+          </div>
+          <div>
+            <span className="kanban-panel-label">Base</span>
+            <span className="badge" style={{ background: "#fef3c7", color: "#92400e" }}>{ticket.base}</span>
+          </div>
+          <div>
+            <span className="kanban-panel-label">Solicitante</span>
+            <span>{ticket.requester}</span>
+          </div>
+          <div>
+            <span className="kanban-panel-label">Responsável</span>
+            <span>{ticket.assignedTo?.name || "Não atribuído"}</span>
+          </div>
+        </div>
+      </div>
 
       {/* Description */}
       {ticket.description && (

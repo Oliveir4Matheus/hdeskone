@@ -423,7 +423,13 @@ table tbody tr:hover {
 .kanban-panel-body {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1rem;
+}
+
+/* Ensure native selects inside panel always drop downward consistently */
+.kanban-panel-body select {
+  position: relative;
 }
 
 /* Kanban modal overlay — z-index 200, below preview-overlay (1000) */
@@ -505,7 +511,7 @@ table tbody tr:hover {
 
 .kanban-panel-edit-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
 }
 
