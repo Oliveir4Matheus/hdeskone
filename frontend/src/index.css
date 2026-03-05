@@ -456,6 +456,160 @@ table tbody tr:hover {
   justify-content: center;
 }
 
+/* Kanban split layout */
+.kanban-layout {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.kanban-board-wrap {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.kanban-card-selected {
+  border: 2px solid #d70f0a !important;
+}
+
+/* Kanban panel (split mode) */
+.kanban-panel {
+  width: 370px;
+  flex-shrink: 0;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 8rem);
+  animation: slideInPanel 0.2s ease;
+}
+
+@keyframes slideInPanel {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.kanban-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f0f1f4;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.kanban-panel-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Kanban modal (centered mode) */
+.kanban-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeOverlay 0.15s ease;
+}
+
+@keyframes fadeOverlay {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.kanban-modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+  animation: slideInPanel 0.2s ease;
+}
+
+.kanban-modal-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Panel/Modal shared content */
+.panel-toggle {
+  display: inline-flex;
+  gap: 2px;
+  background: #eef0f3;
+  border-radius: 8px;
+  padding: 3px;
+}
+
+.panel-toggle-btn {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 550;
+  color: #6b7280;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.panel-toggle-btn:hover {
+  color: #3a3f47;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.panel-toggle-btn.active {
+  background: #fff;
+  color: #111111;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.panel-section {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #f0f1f4;
+}
+
+.panel-section-title {
+  font-size: 0.62rem;
+  color: #8b919d;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.4rem;
+}
+
+.panel-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 0.75rem;
+}
+
+.panel-info-label {
+  font-size: 0.68rem;
+  color: #8b919d;
+}
+
+.panel-info-value {
+  font-size: 0.82rem;
+  color: #111;
+  font-weight: 500;
+}
+
+.panel-edit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+}
+
 /* Gantt */
 .gantt-bar {
   transition: opacity 0.2s, filter 0.2s;

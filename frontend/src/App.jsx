@@ -10,6 +10,7 @@ import NewTicket from "./pages/NewTicket";
 import Config from "./pages/Config";
 import Profile from "./pages/Profile";
 import Kanban from "./pages/Kanban";
+import KanbanMockup from "./pages/KanbanMockup";
 import Gantt from "./pages/Gantt";
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/tickets" element={<Tickets />} />
         <Route path="/tickets/kanban" element={<Kanban />} />
+        <Route path="/tickets/kanban-mockup" element={<KanbanMockup />} />
         <Route path="/tickets/gantt" element={<Gantt />} />
         <Route path="/tickets/new" element={<NewTicket />} />
         <Route path="/tickets/:id" element={<TicketDetail />} />
